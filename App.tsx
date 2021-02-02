@@ -36,6 +36,7 @@ const CombinedDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
+    onSurface: "green",
   },
 };
 
@@ -45,7 +46,10 @@ export default function App() {
   return (
     <PaperProvider theme={CombinedDarkTheme}>
       <NavigationContainer theme={CombinedDarkTheme}>
-        <Stack.Navigator initialRouteName="Habits">
+        <Stack.Navigator
+          initialRouteName="Habits"
+          screenOptions={{ title: false }}
+        >
           {/* <Stack.Screen
             name="Home"
             component={HomeScreen}

@@ -28,17 +28,17 @@ const Habits = ({ navigation }) => {
       const value = await AsyncStorage.getItem("habits");
       if (value !== null) {
         const result = JSON.parse(value);
-        setHabits([result]);
+        setHabits([...result]);
       }
     } catch (e) {
       console.log(e);
     }
-
-    console.log(habits);
   };
 
   useEffect(() => {
-    navigation.addListener("focus", () => getData());
+    // Get habits from storage and clean up after.
+    const unsubsribe = navigation.addListener("focus", () => getData());
+    return unsubsribe;
   });
 
   // const addHabit = (name, frequency) => {
@@ -79,7 +79,7 @@ const Habits = ({ navigation }) => {
       <Headline>Test</Headline>
       <FlatList
         data={habits}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <Card style={{ margin: 5 }} key={item.id}>
             <Checkbox.Item
               label={

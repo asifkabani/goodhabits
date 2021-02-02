@@ -15,6 +15,7 @@ import {
   Switch,
   Subheading,
   HelperText,
+  Snackbar,
 } from "react-native-paper";
 
 const AddHabit = ({ route, navigation }) => {
@@ -23,8 +24,13 @@ const AddHabit = ({ route, navigation }) => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [error, setError] = useState(false);
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   // value states
-  const [habit, setHabit] = useState({ id: 0, name: "", frequency: "Daily" });
+  const [errorText, setErrorText] = useState("");
+  const [habitCount, setHabitCount] = useState(0);
+  const [habitName, setHabitName] = useState("");
+  const [habitFrequency, setHabitFrequency] = useState("Daily");
+  const [habits, setHabits] = useState([]);
   // const [name, setName] = useState("");
   // const [frequency, setFrequency] = useState("Daily");
   // const [time, setTime] = useState({ hours: 0, minutes: 0, meridiem: "AM" });
@@ -39,33 +45,70 @@ const AddHabit = ({ route, navigation }) => {
   //   });
   // });
 
+  // const getData = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem("habits");
+  //     if (value !== null) {
+  //       console.log(value);
+  //       const result = JSON.parse(value);
+  //       setHabit([result]);
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  // useEffect(() => {
+  // Get habits from storage and clean up after.
+  //   const unsubsribe = navigation.addListener("focus", () => getData());
+  //   return unsubsribe;
+  // });
+
   const saveHabit = async () => {
     try {
-      const jsonValue = JSON.stringify(habit);
-      await AsyncStorage.setItem("habits", jsonValue);
+      let newHabit = {
+        id: habitCount,
+        name: habitName,
+        frequency: habitFrequency,
+      };
+
+      let habitArray = [...habits, newHabit];
+
+      let stringifyHabitArray = JSON.stringify(habitArray);
+      await AsyncStorage.setItem("habits", stringifyHabitArray);
     } catch (error) {
       console.log(error);
     }
+
+    setIsSnackbarOpen(!isSnackbarOpen);
+    setHabitName("");
   };
 
   const handleHabit = (name) => {
     if (error) {
-      setError(!error);
+      setError(false);
     }
 
-    setHabit({ ...habit, name });
+    setHabitName(name);
   };
 
   const addHabit = () => {
-    const { name, frequency } = habit;
+    if (habitName.length <= 0) {
+      setErrorText("Name is required");
+      setError(true);
+      return;
+    }
 
-    if (name.length <= 0) {
-      setError({ name: !name });
+    if (habitName.length <= 3) {
+      setErrorText("Name must be more than 3 characters");
+      setError(true);
       return;
     }
 
     saveHabit();
   };
+
+  const dismissSnackbar = () => setIsSnackbarOpen(!isSnackbarOpen);
 
   // Time Picker
   // const onDismiss = useCallback(() => {
@@ -108,17 +151,17 @@ const AddHabit = ({ route, navigation }) => {
             required={true}
             mode="outlined"
             label="Name *"
-            value={habit.name}
+            value={habitName}
             onChangeText={handleHabit}
             error={error}
             style={styles.spacing}
           />
-          {error && <HelperText type="error">Name is required</HelperText>}
+          {error && <HelperText type="error">{errorText}</HelperText>}
         </View>
         <TextInput
           mode="outlined"
           label="Frequency"
-          value={habit.frequency}
+          value={habitFrequency}
           onFocus={() => setIsModalOpen(!isModalOpen)}
           // error={error}
           caretHidden={true}
@@ -189,7 +232,7 @@ const AddHabit = ({ route, navigation }) => {
           onDismiss={() => setIsModalOpen(!isModalOpen)}
         >
           <Picker
-            selectedValue={habit.frequency}
+            selectedValue={habitFrequency}
             onValueChange={(f) => setFrequency(f)}
             style={{
               backgroundColor: "white",
@@ -205,6 +248,13 @@ const AddHabit = ({ route, navigation }) => {
           </Picker>
         </Modal>
       </Portal>
+      <Snackbar
+        visible={isSnackbarOpen}
+        onDismiss={dismissSnackbar}
+        duration={3000}
+      >
+        <Text>Habit has been added successfully.</Text>
+      </Snackbar>
     </>
   );
 };
