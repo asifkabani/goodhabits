@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { View, FlatList, StyleSheet, Alert } from "react-native";
-import {
-  Text,
-  Card,
-  Checkbox,
-  Caption,
-  FAB,
-  Appbar,
-  Headline,
-} from "react-native-paper";
+import { FlatList, Alert } from "react-native";
+import { FAB } from "react-native-paper";
+import Layout from "../components/Layout";
 import HabitCard from "../components/HabitCard";
 
 const Habits = ({ navigation }) => {
@@ -49,56 +42,28 @@ const Habits = ({ navigation }) => {
 
   //   console.log("all removed");
   // };
+  const onEdit = (id) => {
+    navigation.navigate("Add Habit", { id });
+  };
 
   return (
-    <View style={styles.container}>
-      <Headline style={styles.headline}>My Habits</Headline>
+    <Layout title="My Habits">
       <FlatList
         data={habits}
-        renderItem={({ item, index }) => (
-          // <Card style={{ margin: 5 }} key={item.id}>
-          //   <Checkbox.Item
-          //     label={
-          //       <TodoLabel
-          //         text={item.name}
-          //         time={item.time}
-          //         frequency={item.frequency}
-          //       />
-          //     }
-          //     status={item.complete ? "checked" : "unchecked"}
-          //     // onPress={() => editHabit(item.id)}
-          //     style={{ padding: 15 }}
-          //   />
-          // </Card>
+        keyExtractor={(item, index) => item.id}
+        renderItem={({ item }) => (
           <HabitCard
             id={item.id}
             title={item.name}
             time={item.time}
             frequency={item.frequency}
+            onEdit={() => onEdit(item.id)}
           />
         )}
       />
       <FAB icon="plus" onPress={() => navigation.navigate("Add Habit")} />
-    </View>
+    </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 10,
-    paddingRight: 35,
-    paddingLeft: 35,
-    paddingBottom: 0,
-    flex: 1,
-    alignItems: "center",
-  },
-  headline: {
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  spacing: {
-    paddingBottom: 10,
-  },
-});
 
 export default Habits;

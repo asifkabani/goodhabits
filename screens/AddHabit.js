@@ -7,9 +7,6 @@ import {
   TextInput,
   Text,
   Button,
-  Caption,
-  Appbar,
-  Headline,
   Modal,
   Portal,
   Switch,
@@ -17,6 +14,7 @@ import {
   HelperText,
   Snackbar,
 } from "react-native-paper";
+import Layout from "../components/Layout";
 
 const AddHabit = ({ route, navigation }) => {
   // view states
@@ -30,10 +28,14 @@ const AddHabit = ({ route, navigation }) => {
   const [habitCount, setHabitCount] = useState(0);
   const [habitName, setHabitName] = useState("");
   const [habitFrequency, setHabitFrequency] = useState("Daily");
+  // const [habitTime, setHabitTime] = useState(null);
   const [habits, setHabits] = useState([]);
-  // const [name, setName] = useState("");
-  // const [frequency, setFrequency] = useState("Daily");
-  // const [time, setTime] = useState({ hours: 0, minutes: 0, meridiem: "AM" });
+  // side effects
+  useEffect(() => {
+    if (route.params?.id) {
+      console.log("routes here", route.params.id);
+    }
+  }, [route.params?.id]);
 
   // useEffect(() => {
   //   navigation.addListener("focus", async () => {
@@ -143,31 +145,29 @@ const AddHabit = ({ route, navigation }) => {
   // const onChangeSearch = (query) => setSearchQuery(query);
 
   return (
-    <>
-      <View style={styles.container}>
-        <Headline style={styles.headline}>Add Habit</Headline>
-        <View style={styles.spacing}>
-          <TextInput
-            required={true}
-            mode="outlined"
-            label="Name *"
-            value={habitName}
-            onChangeText={handleHabit}
-            error={error}
-            style={styles.spacing}
-          />
-          {error && <HelperText type="error">{errorText}</HelperText>}
-        </View>
+    <Layout title="Add Habit">
+      <View style={styles.spacing}>
         <TextInput
+          required={true}
           mode="outlined"
-          label="Frequency"
-          value={habitFrequency}
-          onFocus={() => setIsModalOpen(!isModalOpen)}
-          // error={error}
-          caretHidden={true}
+          label="Name *"
+          value={habitName}
+          onChangeText={handleHabit}
+          error={error}
           style={styles.spacing}
         />
-        {/* <View
+        {error && <HelperText type="error">{errorText}</HelperText>}
+      </View>
+      <TextInput
+        mode="outlined"
+        label="Frequency"
+        value={habitFrequency}
+        onFocus={() => setIsModalOpen(!isModalOpen)}
+        // error={error}
+        caretHidden={true}
+        style={styles.spacing}
+      />
+      {/* <View
           style={[
             {
               flexDirection: "row",
@@ -183,7 +183,7 @@ const AddHabit = ({ route, navigation }) => {
             disabled={true}
           />
         </View> */}
-        {/* {isSwitchOn && (
+      {/* {isSwitchOn && (
           <TextInput
             mode="outlined"
             label="Time"
@@ -195,10 +195,10 @@ const AddHabit = ({ route, navigation }) => {
             style={styles.spacing}
           />
         )} */}
-        <Button mode="contained" onPress={addHabit} style={styles.button}>
-          Add
-        </Button>
-        {/* <FlatList
+      <Button mode="contained" onPress={addHabit} style={styles.button}>
+        Add
+      </Button>
+      {/* <FlatList
           data={todos}
           renderItem={({ item }) => (
             <Card style={{ margin: 5 }}>
@@ -217,7 +217,7 @@ const AddHabit = ({ route, navigation }) => {
             </Card>
           )}
         /> */}
-      </View>
+
       {/* <TimePickerModal
         visible={isTimePickerOpen}
         onDismiss={() => setIsTimePickerOpen(!setIsTimePickerOpen)}
@@ -255,21 +255,11 @@ const AddHabit = ({ route, navigation }) => {
       >
         <Text>Habit has been added successfully.</Text>
       </Snackbar>
-    </>
+    </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 10,
-    paddingRight: 35,
-    paddingLeft: 35,
-    paddingBottom: 0,
-  },
-  headline: {
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
   spacing: {
     paddingBottom: 10,
   },

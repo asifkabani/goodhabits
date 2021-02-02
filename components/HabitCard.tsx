@@ -10,34 +10,12 @@ import {
   Title,
 } from "react-native-paper";
 
-const TodoLabel = ({ text, time, frequency }) => (
-  <>
-    <Text>{text}</Text>
-    {"\n"}
-    {"\n"}
-    <Caption>TIME</Caption>
-    {"\n"}
-    <Text>{time}</Text>
-    {"\n"}
-    {"\n"}
-    <Caption>FREQUENCY</Caption>
-    {"\n"}
-    <Text>{frequency}</Text>
-  </>
-);
-
-const HabitCard = ({ title, time, frequency, id }) => {
+const HabitCard = ({ title, time, frequency, id, onEdit }) => {
   return (
-    <Card style={styles.container} key={id}>
+    <Card style={styles.container} key={id} onPress={onEdit}>
       <Card.Content>
         <Title style={styles.title}>{title}</Title>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-          }}
-        >
+        <View style={styles.chipContainer}>
           <Chip>{frequency}</Chip>
         </View>
       </Card.Content>
@@ -46,9 +24,10 @@ const HabitCard = ({ title, time, frequency, id }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 5,
-    paddingRight: 10,
+  chipContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   title: {
     fontSize: 18,
