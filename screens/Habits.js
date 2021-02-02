@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { View, FlatList, StyleSheet, Alert } from "react-native";
 import {
-  View,
-  Image,
-  FlatList,
-  StyleSheet,
-  Alert,
-  VirtualizedList,
-} from "react-native";
-import {
-  TextInput,
   Text,
-  Button,
   Card,
   Checkbox,
   Caption,
@@ -19,6 +10,7 @@ import {
   Appbar,
   Headline,
 } from "react-native-paper";
+import HabitCard from "../components/HabitCard";
 
 const Habits = ({ navigation }) => {
   const [habits, setHabits] = useState([]);
@@ -58,42 +50,32 @@ const Habits = ({ navigation }) => {
   //   console.log("all removed");
   // };
 
-  const TodoLabel = ({ text, time, frequency }) => (
-    <>
-      <Text>{text}</Text>
-      {"\n"}
-      {"\n"}
-      <Caption>TIME</Caption>
-      {"\n"}
-      <Text>{time}</Text>
-      {"\n"}
-      {"\n"}
-      <Caption>FREQUENCY</Caption>
-      {"\n"}
-      <Text>{frequency}</Text>
-    </>
-  );
-
   return (
     <View style={styles.container}>
-      <Headline>Test</Headline>
+      <Headline style={styles.headline}>My Habits</Headline>
       <FlatList
         data={habits}
         renderItem={({ item, index }) => (
-          <Card style={{ margin: 5 }} key={item.id}>
-            <Checkbox.Item
-              label={
-                <TodoLabel
-                  text={item.name}
-                  time={item.time}
-                  frequency={item.frequency}
-                />
-              }
-              status={item.complete ? "checked" : "unchecked"}
-              // onPress={() => editHabit(item.id)}
-              style={{ padding: 15 }}
-            />
-          </Card>
+          // <Card style={{ margin: 5 }} key={item.id}>
+          //   <Checkbox.Item
+          //     label={
+          //       <TodoLabel
+          //         text={item.name}
+          //         time={item.time}
+          //         frequency={item.frequency}
+          //       />
+          //     }
+          //     status={item.complete ? "checked" : "unchecked"}
+          //     // onPress={() => editHabit(item.id)}
+          //     style={{ padding: 15 }}
+          //   />
+          // </Card>
+          <HabitCard
+            id={item.id}
+            title={item.name}
+            time={item.time}
+            frequency={item.frequency}
+          />
         )}
       />
       <FAB icon="plus" onPress={() => navigation.navigate("Add Habit")} />
@@ -103,9 +85,19 @@ const Habits = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#2345FF",
+    paddingTop: 10,
+    paddingRight: 35,
+    paddingLeft: 35,
+    paddingBottom: 0,
     flex: 1,
     alignItems: "center",
+  },
+  headline: {
+    fontWeight: "bold",
+    paddingBottom: 10,
+  },
+  spacing: {
+    paddingBottom: 10,
   },
 });
 
