@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { TimePickerModal } from "react-native-paper-dates";
@@ -15,6 +15,8 @@ import {
   Snackbar,
 } from "react-native-paper";
 import Layout from "../components/Layout";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 const AddHabit = ({ route, navigation }) => {
   // view states
@@ -25,17 +27,34 @@ const AddHabit = ({ route, navigation }) => {
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   // value states
   const [errorText, setErrorText] = useState("");
-  const [habitCount, setHabitCount] = useState(0);
   const [habitName, setHabitName] = useState("");
   const [habitFrequency, setHabitFrequency] = useState("Daily");
   // const [habitTime, setHabitTime] = useState(null);
   const [habits, setHabits] = useState([]);
-  // side effects
+
   useEffect(() => {
-    if (route.params?.id) {
-      console.log("routes here", route.params.id);
+    // Get habits from storage and clean up after.
+    const habits = navigation.addListener("focus", () => getData());
+    return habits;
+  });
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("habits");
+      if (value !== null) {
+        const result = JSON.parse(value);
+        setHabits(result);
+      }
+    } catch (e) {
+      console.log(e);
     }
-  }, [route.params?.id]);
+  };
+
+  // useEffect(() => {
+  //   if (route.params?.id) {
+  //     console.log("routes here", route.params.id);
+  //   }
+  // }, [route.params?.id]);
 
   // useEffect(() => {
   //   navigation.addListener("focus", async () => {
@@ -47,37 +66,18 @@ const AddHabit = ({ route, navigation }) => {
   //   });
   // });
 
-  // const getData = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem("habits");
-  //     if (value !== null) {
-  //       console.log(value);
-  //       const result = JSON.parse(value);
-  //       setHabit([result]);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
-  // useEffect(() => {
-  // Get habits from storage and clean up after.
-  //   const unsubsribe = navigation.addListener("focus", () => getData());
-  //   return unsubsribe;
-  // });
-
   const saveHabit = async () => {
+    let newHabit = {
+      id: uuidv4(),
+      name: habitName,
+      frequency: habitFrequency,
+    };
+
+    let newArr = [...habits, newHabit];
+    let stringifyArr = JSON.stringify(newArr);
+
     try {
-      let newHabit = {
-        id: habitCount,
-        name: habitName,
-        frequency: habitFrequency,
-      };
-
-      let habitArray = [...habits, newHabit];
-
-      let stringifyHabitArray = JSON.stringify(habitArray);
-      await AsyncStorage.setItem("habits", stringifyHabitArray);
+      await AsyncStorage.setItem("habits", stringifyArr);
     } catch (error) {
       console.log(error);
     }

@@ -50,10 +50,10 @@ const Habits = ({ navigation }) => {
     <Layout title="My Habits">
       <FlatList
         data={habits}
-        keyExtractor={(item, index) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <HabitCard
-            id={item.id}
+            key={item.id}
             title={item.name}
             time={item.time}
             frequency={item.frequency}

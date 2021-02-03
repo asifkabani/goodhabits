@@ -10,9 +10,9 @@ import {
   Title,
 } from "react-native-paper";
 
-const HabitCard = ({ title, time, frequency, id, onEdit }) => {
+const HabitCard = ({ title, time, frequency, onEdit }) => {
   return (
-    <Card style={styles.container} key={id} onPress={onEdit}>
+    <Card style={styles.container} onPress={onEdit}>
       <Card.Content>
         <Title style={styles.title}>{title}</Title>
         <View style={styles.chipContainer}>
