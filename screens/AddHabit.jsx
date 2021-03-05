@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { TimePickerModal } from "react-native-paper-dates";
 import { View, StyleSheet } from "react-native";
@@ -16,55 +15,40 @@ import {
 } from "react-native-paper";
 import Layout from "../components/Layout";
 import "react-native-get-random-values";
+import { useAsyncStorage } from '@react-native-async-storage/async-storage';
 import { v4 as uuidv4 } from "uuid";
 
 const AddHabit = ({ route, navigation }) => {
   // view states
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
-  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  // const [isSwitchOn, setIsSwitchOn] = useState(false);
+  // const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [error, setError] = useState(false);
   const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
   // value states
   const [errorText, setErrorText] = useState("");
   const [habitName, setHabitName] = useState("");
   const [habitFrequency, setHabitFrequency] = useState("Daily");
-  // const [habitTime, setHabitTime] = useState(null);
   const [habits, setHabits] = useState([]);
-
+  // effects
+  const { getItem, setItem } = useAsyncStorage('habits');
+  
   useEffect(() => {
-    // Get habits from storage and clean up after.
-    const habits = navigation.addListener("focus", () => getData());
-    return habits;
-  });
+    if (!route?.params?.id) return
+    navigation.addListener('focus', () => readItemFromStorage())
+  }, [route?.params?.id]);
 
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("habits");
-      if (value !== null) {
-        const result = JSON.parse(value);
-        setHabits(result);
-      }
-    } catch (e) {
-      console.log(e);
-    }
+  const readItemFromStorage = async () => {
+    const habits = await getItem();
+    
+    if (!habits) return
+
+    const parseArr = JSON.parse(habits)
+    const habit = parseArr.find(h => h.id === route.params.id)
+    setHabitName(habit.name)
+    setHabitFrequency(habit.frequency)
+    setHabits(...habits, parseArr)
   };
-
-  // useEffect(() => {
-  //   if (route.params?.id) {
-  //     console.log("routes here", route.params.id);
-  //   }
-  // }, [route.params?.id]);
-
-  // useEffect(() => {
-  //   navigation.addListener("focus", async () => {
-  //     const existingData = await AsyncStorage.getItem("habits");
-  //     console.log(existingData);
-  //     if (existingData) {
-  //       setHabit(JSON.parse(existingData));
-  //     }
-  //   });
-  // });
 
   const saveHabit = async () => {
     let newHabit = {
@@ -77,7 +61,7 @@ const AddHabit = ({ route, navigation }) => {
     let stringifyArr = JSON.stringify(newArr);
 
     try {
-      await AsyncStorage.setItem("habits", stringifyArr);
+      await setItem(stringifyArr)
     } catch (error) {
       console.log(error);
     }

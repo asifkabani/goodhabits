@@ -2,10 +2,9 @@ import React from "react";
 import "react-native-gesture-handler";
 // Screens
 import Habits from "./screens/Habits";
-import AddHabit from "./screens/AddHabit";
+import AddEdit from "./screens/AddEdit";
 // Navigation
 import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import {
   NavigationContainer,
   DarkTheme as NavigationDarkTheme,
@@ -16,6 +15,7 @@ import {
   DarkTheme as PaperDarkTheme,
   DefaultTheme as PaperDefaultTheme,
   Provider as PaperProvider,
+  Appbar
 } from "react-native-paper";
 // Images
 import bG1 from "./assets/bg1.png";
@@ -46,22 +46,17 @@ export default function App() {
   return (
     <PaperProvider theme={CombinedDarkTheme}>
       <NavigationContainer theme={CombinedDarkTheme}>
+      <Appbar.Header>
+        <Appbar.Action icon="menu" onPress={() => console.log("action")} />
+        <Appbar.Content title="Good Habits" />
+      </Appbar.Header>
         <Stack.Navigator
           initialRouteName="Habits"
           screenOptions={{ title: false }}
         >
-          {/* <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false }}
-          /> */}
           <Stack.Screen name="Habits" component={Habits} />
-          <Stack.Screen name="Add Habit" component={AddHabit} />
+          <Stack.Screen name="AddEdit" component={AddEdit} />
         </Stack.Navigator>
-        {/* <Tab.Navigator initialRouteName="Add Habit">
-          <Tab.Screen name="Habits" component={Habits} />
-          <Tab.Screen name="Add Habit" component={AddHabit} />
-        </Tab.Navigator> */}
       </NavigationContainer>
     </PaperProvider>
   );
