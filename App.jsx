@@ -36,7 +36,6 @@ const CombinedDarkTheme = {
   colors: {
     ...PaperDarkTheme.colors,
     ...NavigationDarkTheme.colors,
-    onSurface: "green",
   },
 };
 
@@ -52,7 +51,7 @@ export default function App() {
       </Appbar.Header>
         <Stack.Navigator
           initialRouteName="Habits"
-          screenOptions={{ title: false }}
+          screenOptions={{headerShown: false}}
         >
           <Stack.Screen name="Habits" component={Habits} />
           <Stack.Screen name="AddEdit" component={AddEdit} />

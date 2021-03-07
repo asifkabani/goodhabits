@@ -14,8 +14,8 @@ const Layout = ({ title, children }) => {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 10,
-    paddingRight: 5,
-    paddingLeft: 5,
+    paddingRight: 10,
+    paddingLeft: 10,
     paddingBottom: 0,
     flex: 1,
   },

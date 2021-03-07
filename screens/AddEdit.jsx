@@ -22,9 +22,10 @@ const AddEdit = ({ route, navigation }) => {
   const [errorText, setErrorText] = useState("");
   const [habitName, setHabitName] = useState("");
   const [habitFrequency, setHabitFrequency] = useState("Daily");
+  const [habitId, setHabitId] = useState(null);
   const [habits, setHabits] = useState([]);
   const [action, setAction] = useState('')
-  const { getItem, setItem, mergeItem } = useAsyncStorage('habits');
+  const { getItem, setItem } = useAsyncStorage('habits');
   
   useEffect(() => {
     navigation.addListener('focus', () => readItemFromStorage())
@@ -35,8 +36,10 @@ const AddEdit = ({ route, navigation }) => {
   useEffect(() => {
     if (habits.length > 0 && route?.params?.action === 'Edit') {
       const habit = habits.find(h => h.id === route.params.id)
+      console.log(habit)
       setHabitName(habit.name)
       setHabitFrequency(habit.frequency)
+      setHabitId(habit.id)
     }
   }, [habits, route])
 
@@ -49,14 +52,28 @@ const AddEdit = ({ route, navigation }) => {
   };
 
   const saveHabit = async () => {
-    let newHabit = {
-      id: uuidv4(),
-      name: habitName,
-      frequency: habitFrequency,
-    };
+    let newHabit, newArr, stringifyArr
 
-    let newArr = [...habits, newHabit];
-    let stringifyArr = JSON.stringify(newArr);
+    if (habitId?.length > 0) {
+      newHabit = {
+        id: habitId,
+        name: habitName,
+        frequency: habitFrequency,
+      };
+
+      let item = habits.findIndex(h => h.id === habitId)
+      let replace = habits.splice(item, 1, newHabit)
+      stringifyArr = JSON.stringify(replace);
+    } else {
+      newHabit = {
+        id: uuidv4(),
+        name: habitName,
+        frequency: habitFrequency,
+      };
+  
+      newArr = [...habits, newHabit];
+      stringifyArr = JSON.stringify(newArr);
+    }
 
     try {
       await setItem(stringifyArr)
@@ -115,7 +132,7 @@ const AddEdit = ({ route, navigation }) => {
         style={styles.spacing}
       />
       <Button mode="contained" onPress={addHabit} style={styles.button}>
-        Add
+        {action === 'Add' ? 'Add Habit' : 'Save Habit'}
       </Button>
       <Portal>
         <Modal
